@@ -26,8 +26,8 @@ rectangular_message = 'Эй, это ведь прямоугольный треу
 undefined_message = 'Очень странный треугольник. Не могу определить его характеристику('
 
 message = 
-  if is_rectangular
-    rectangular_message
+  if is_isosceles
+    isosceles_message
   elsif is_equilateral
     equilateral_message
   elsif is_rectangular
