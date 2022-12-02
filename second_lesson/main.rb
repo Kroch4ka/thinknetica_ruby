@@ -23,35 +23,64 @@ def get_arr_with_fib_sequence(limit_num = 100)
   result
 end
 
-
+#1
 months = {
-  january: 31,
-  february: leap_year?(Time.now.year) ? 28 : 29,
-  march: 31,
-  april: 30,
-  may: 31,
-  june: 30,
-  july: 31,
-  august: 31,
-  september: 30,
-  october: 31,
-  november: 30,
-  december: 31
+  1 => 31,
+  2 => 28,
+  3 => 31,
+  4 => 30,
+  5 => 31,
+  6 => 30,
+  7 => 31,
+  8 => 31,
+  9 => 30,
+  10 => 31,
+  11 => 30,
+  12 => 31
 }
 
 months.each do |month, count_days|
   puts month if count_days == 30
 end
 
+#2
 (10..100).step(5).to_a
 
+#3
 puts get_arr_with_fib_sequence
 
+#4
 result = ('a'..'z')
   .each_with_index
   .each_with_object({}) do |(letter, idx), hash|
     (hash[letter.to_sym] = idx + 1) unless (letter =~ /[aeoiuy]/).nil?
   end
+
+
+#5
+
+puts 'Введите, пожалуйста, число'
+day = gets.chomp.to_i
+
+puts 'Введите, пожалуйста, месяц'
+month = gets.chomp.to_i
+
+puts 'Введите, пожалуйста, год'
+year = gets.chomp.to_i
+
+result = 0
+current_month = 1
+leap_year_increment = leap_year?(year) ? 1 : 0
+
+while month > current_month
+  result += months[current_month]
+  current_month += 1
+end
+
+result += day + leap_year_increment
+
+puts "Порядковы номер: #{result}"
+#6
 
 def get_price_title
   puts 'Введите, пожалуйста, название товара'
