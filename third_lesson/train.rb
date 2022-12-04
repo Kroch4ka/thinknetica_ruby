@@ -30,7 +30,7 @@ class Train
 
     return target_station if @current_station_index == get_stations_of_current_route.size - 1
 
-    return @route.stations[@current_station_index + 1]
+    return get_stations_of_current_route[@current_station_index + 1]
   end
 
   def get_prev_station(target_station)
