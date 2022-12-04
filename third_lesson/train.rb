@@ -7,61 +7,49 @@ class Train
   INCREASE_STEP = 10
 
   def initialize(number, type, number_of_wagons)
-
     @number = number
     @type = type
     @number_of_wagons = number_of_wagons
     @speed = 0
     @route = nil
-    @current_station = nil
+    @current_station_index = 0
   end
 
   def move_up
     @current_station.send_train
-    @current_station = get_next_station @current_station
+    @current_station = get_next_station
   end
 
   def move_down
     @current_station.send_train
-    @current_station = get_prev_station @current_station
+    @current_station = get_prev_station
   end
 
   def get_next_station(target_station)
-    raise 'Route is not set' if @route.nil?
+    validate_set_route
 
-    stations = @route.stations
+    return target_station if @current_station_index == get_stations_of_current_route.size - 1
 
-    return target_station if stations.last.equal? target_station
-
-    stations.each_with_index do |station, idx|
-      if station.equal? target_station
-        return stations[idx + 1]
-      end
-    end
+    return @route.stations[@current_station_index + 1]
   end
 
   def get_prev_station(target_station)
-    raise 'Route is not set' if @route.nil?
+    validate_set_route
 
-    stations = @route.stations
+    return target_station if @current_station_index == 0
 
-    return target_station if stations.first.equal? target_station
-
-    stations.each_with_index do |station, idx|
-      if station.equal? target_station
-        return stations[idx - 1]
-      end
-    end
+    return get_stations_of_current_route[@current_station_index + 1]
   end
 
   def get_current_station
-    raise 'Route is not set' if @route.nil?
+    validate_set_route
     
     @current_station
   end
   
   def set_route(route)
-
+    valdate_correct_route_class
+    
     @route = route
     @route.starting_station.add_train self
     @current_station = @route.starting_station
@@ -81,5 +69,19 @@ class Train
 
   def unhook_wagon
     number_of_wagons -= 1 if @speed == 0
+  end
+
+  private def get_stations_of_current_route
+    validate_set_route
+
+    @route.stations
+  end
+
+  private def validate_set_route
+    raise 'Route is not set' if @route.nil?
+  end
+
+  private def valdate_correct_route_class
+    raise 'setted undefined class for route' unless @route.is_a? Route
   end
 end
