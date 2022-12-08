@@ -186,7 +186,7 @@ def main_loop
     when '4' then manage_route
     when '5' then manage_train
     when '6' then show_station_detail
-    when STOP_COMMAND then return
+    when stop_command then return
     else
       puts 'Некорректная команда!'
     end
