@@ -1,10 +1,12 @@
-class Route
+require_relative './station'
 
-  attr_reader :intermediate_stations
+class Route
+  attr_reader :name
 
   def initialize(starting_station, end_station)
     @starting_station = starting_station
     @end_station = end_station
+    @name = "#{starting_station.name}-#{end_station.name}"
     @intermediate_stations = []
   end
 
@@ -21,6 +23,10 @@ class Route
     puts @starting_station.name
     @intermediate_stations.each { |station| puts station.name }
     puts @end_station.name
+  end
+
+  def intermediate_stations
+    @intermediate_stations.freeze
   end
 
   def stations

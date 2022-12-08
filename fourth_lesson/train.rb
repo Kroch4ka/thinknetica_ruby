@@ -1,8 +1,9 @@
-require_relative '../route'
-require_relative '../wagons/base_wagon'
+require_relative './route'
 
-class BaseTrain
-  attr_reader :speed, :wagons, :type, :number, :route
+class Train
+  attr_reader :speed, :number_of_wagons, :number
+
+  INCREASE_STEP = 10
 
   def initialize(number, type)
     @number = number
@@ -24,37 +25,33 @@ class BaseTrain
   end
 
   def get_next_station(target_station)
-    validate_set_route
-
     return target_station if @current_station_index == get_stations_of_current_route.size - 1
 
     return get_stations_of_current_route[@current_station_index + 1]
   end
 
   def get_prev_station(target_station)
-    validate_set_route
-
     return target_station if @current_station_index == 0
 
     return get_stations_of_current_route[@current_station_index + 1]
   end
 
   def get_current_station
-    validate_set_route
-    
     @current_station
+  end
+
+  def has_route?
+   !!@route
   end
   
   def set_route(route)
-    valdate_correct_route_class
-    
     @route = route
     @route.starting_station.add_train self
     @current_station = @route.starting_station
   end
 
   def increase_speed
-    @speed += increase_speed_step
+    @speed += self.class::INCREASE_STEP
   end
 
   def slow_down
@@ -62,36 +59,10 @@ class BaseTrain
   end
 
   def attach_wagon(wagon)
-    validate_wagon wagon
-
-    @wagons << wagon if wagon.type == self.type
+    @wagons << wagon if @speed == 0 && @type == wagon.class::TRAIN_TYPE
   end
 
   def unhook_wagon
-    number_of_wagons -= 1 if @speed == 0
-  end
-
-  private
-
-  def increase_speed_step
-    10
-  end
-
-  def get_stations_of_current_route
-    validate_set_route
-
-    @route.stations
-  end
-
-  def validate_wagon(wagon)
-    raise 'Unexpected wagon class' unless wagon.is_a? BaseWagon
-  end
-
-  def validate_set_route
-    raise 'Route is not set' if @route.nil?
-  end
-
-  def valdate_correct_route_class
-    raise 'setted undefined class for route' unless @route.is_a? Route
+    @wagons.pop if @speed == 0
   end
 end
