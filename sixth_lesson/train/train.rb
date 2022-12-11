@@ -24,9 +24,9 @@ class Train
     @speed = 0
     @route = nil
     @current_station_index = 0
+    validate!
     @@trains << self
     self.register_instance
-    validate!
   end
 
   def move_up
