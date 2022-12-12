@@ -252,7 +252,7 @@ end
 
 def show_passenger_train_detail(train)
   puts 'Информация по выбранному пассажирскому поезду: '
-  show_items(train.each) { |wagon| "Общее количество мест: #{wagon.total_seats}; Количество занятых: #{wagon.total_occupied};" }
+  show_items(train.each) { |wagon| "Общее количество мест: #{wagon.volume}; Количество занятых: #{wagon.occupied_volume};" }
 end
 
 def show_cargo_train_detail(train)
@@ -292,7 +292,7 @@ end
 
 def take_volume_in_cargo_wagon(wagon)
   puts "Введите объём, который необходимо занять! Можно только: #{wagon.get_free_volume}"
-  volume = gets.chomp
+  volume = gets.chomp.to_i
   print 'Объём: '
 
   if volume > wagon.get_free_volume
@@ -303,8 +303,8 @@ def take_volume_in_cargo_wagon(wagon)
 end
 
 def take_place_in_passenger_wagon(wagon)
-  if wagon.has_empty_seats?
-    puts 'Успешно' if wagon.take_the_place
+  if wagon.has_free_volume?
+    puts 'Успешно' if wagon.take_place
   else
     puts 'Свободных мест, к сожалению, нет'
   end
