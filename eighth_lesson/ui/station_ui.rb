@@ -19,6 +19,7 @@ class StationUi < BaseUI
       return
     end
     draw_numbered_list(station.trains, &:number)
+    sleep 1
     clear_console
   end
 end

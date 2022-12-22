@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require_relative 'state'
+require_relative '../modules/state'
 class BaseUI
   extend State
   def self.draw_numbered_list(iterable, &block)
