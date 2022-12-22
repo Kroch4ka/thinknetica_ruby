@@ -13,7 +13,7 @@ class TrainUI < BaseUI
     number = gets.chomp.to_i
     puts 'Выберите тип поезда: '
     chosen_type = choose_variant(train_types.keys) { |type| train_types[type][:name] }
-    puts 'Успешно!' if train_types[chosen_type][:klass].new number
+    puts 'Успешно!' if trains << train_types[chosen_type][:klass].new(number)
   end
 
   def self.set_route

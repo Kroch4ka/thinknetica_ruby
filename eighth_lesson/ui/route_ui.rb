@@ -15,7 +15,7 @@ class RouteUI < BaseUI
     start_station = choose_variant(stations, &:name)
     puts 'Выберите конечную станцию из предложенных!'
     end_station = choose_variant(stations, &:name)
-    puts 'Успешно!' if Route.new(start_station, end_station)
+    puts 'Успешно!' if routes << Route.new(start_station, end_station)
   end
 
   def self.manage_routes
