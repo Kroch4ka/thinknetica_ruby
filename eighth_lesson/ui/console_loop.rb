@@ -17,6 +17,7 @@ class ConsoleLoop < BaseUI
       'Создать поезд' => :create_train,
       'Создать маршрут' => :create_route,
       'Управлять маршрутом' => :manage_routes,
+      'Управлять поездом' => :manage_train,
       'Просмотреть информацию по станциям' => :show_stations,
       'Выйти' => :exit
     }

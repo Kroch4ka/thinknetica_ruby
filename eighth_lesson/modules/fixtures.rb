@@ -9,8 +9,8 @@ module Fixtures
 
   class << self
     def prepare
-      cargo_train = CargoTrain.new 123
-      passenger_train = PassengerTrain.new 123
+      cargo_train = CargoTrain.new '123-45'
+      passenger_train = PassengerTrain.new '123-45'
       first_station = Station.new 'Алексеевская'
       first_station.add_train cargo_train
       second_station = Station.new 'Александровская'

@@ -1,13 +1,25 @@
 # frozen_string_literal: true
-
+require_relative '../modules/manufacturer'
+require_relative '../modules/instance_counter'
+require_relative '../modules/validatable'
 class Train
-  include Enumerable
-
-  attr_reader :current_speed, :number
+  include Manufacturer
+  include InstanceCounter
+  include Validatable
 
   INCREASE_SPEED_STEP = 10
   ALLOWED_WAGON_TYPES = %i[].freeze
   TYPE = nil
+  NUMBER_FORMAT = /^\w{3}-*\w{2}$/
+  attr_reader :current_speed, :number
+  
+  instances # Инициализируем инстанс переменную класса @instances при загрузке класса
+
+  @@trains = []
+  def self.find(number)
+    @@trains.find { |train| train.number == number }
+  end
+
   def initialize(number)
     @number = number
     @wagons = []
@@ -15,10 +27,8 @@ class Train
     @current_route = nil
     @current_station = nil
     @current_station_index = 0
-  end
-
-  def each(&block)
-    @wagons.each(&block) if block_given?
+    validate!
+    register_instance
   end
 
   def wagons
@@ -50,7 +60,7 @@ class Train
   end
 
   def drive_forward
-    current_station.send_train self
+    current_station.send_train(self)
     self.current_station = next_station
   end
 

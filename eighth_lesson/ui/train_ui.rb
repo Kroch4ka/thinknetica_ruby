@@ -1,19 +1,22 @@
 # frozen_string_literal: true
 require_relative 'base_ui'
+require_relative 'wagon_ui'
 require_relative '../trains/cargo_train'
 require_relative '../trains/passenger_train'
-require_relative '../wagons/cargo_wagon'
-require_relative '../wagons/passenger_wagon'
+require_relative '../errors/validation_error'
 
 class TrainUI < BaseUI
   def self.create_train
-    puts 'Вы в режиме создания поезда!'
     puts 'Введите номер поезда'
     print 'Номер: '
-    number = gets.chomp.to_i
+    number = gets.chomp
     puts 'Выберите тип поезда: '
     chosen_type = choose_variant(train_types.keys) { |type| train_types[type][:name] }
     puts 'Успешно!' if trains << train_types[chosen_type][:klass].new(number)
+  rescue ValidationError => e
+    puts e.message
+    puts 'Заново!'
+    retry
   end
 
   def self.set_route
@@ -40,63 +43,10 @@ class TrainUI < BaseUI
 
     chosen_train = choose_variant(trains, &:number)
     action = choose_variant(manage_actions.keys)
-    send(action, chosen_train)
+    send(manage_actions[action], chosen_train)
   end
 
-  def self.add_wagon(train)
-    available_wagon_types = train.class::ALLOWED_WAGON_TYPES.intersection(wagon_types.keys)
-    chosen_wagon_type = choose_variant(available_wagon_types) { |type| wagon_types[type][:name] }
-    wagon = wagon_types[chosen_wagon_type][:klass].new
-    puts 'Успешно' if train.add_wagon wagon
-  end
-
-  def self.unhook_wagon(train)
-    puts 'Успешно' if train.unhook_wagon
-  end
-
-  def self.drive_forward(train)
-    route = train.send(:route)
-    if route.nil?
-      puts 'Данному поезду не установлен маршрут!'
-      return
-    end
-
-    puts 'Успешно!' if train.drive_forward
-  end
-
-  def self.drive_back(train)
-    route = train.send(:route)
-    if route.nil?
-      puts 'Данному поезду не установлен маршрут!'
-      return
-    end
-
-    puts 'Успешно!' if train.drive_back
-  end
-
-  private_class_method def self.manage_actions
-    {
-      'Добавить вагон' => :add_wagon,
-      'Удалить вагон' => :unhook_wagon,
-      'Проехать вперёд' => :drive_forward,
-      'Проехать назад' => :move_down
-    }
-  end
-
-  private_class_method def self.wagon_types
-    {
-      cargo: {
-        name: 'Грузовой',
-        klass: CargoWagon
-      },
-      passenger: {
-        name: 'Пассажирский',
-        klass: PassengerWagon
-      }
-    }
-  end
-
-  private_class_method def self.train_types
+  def self.train_types
     {
       cargo: {
         name: 'Грузовой',
@@ -106,6 +56,65 @@ class TrainUI < BaseUI
         name: 'Пассажирский',
         klass: PassengerTrain
       }
+    }
+  end
+
+  private_class_method def self.manage_wagon(train)
+    chosen_wagon = choose_variant(train.wagons) { '' }
+    WagonUI.manage_wagon chosen_wagon
+  end
+
+  private_class_method def self.add_wagon(train)
+    wagon = WagonUI.create_wagon
+    puts 'Успещно' if train.add_wagon wagon
+  end
+
+  private_class_method def self.unhook_wagon(train)
+    puts 'Успешно' if train.unhook_wagon
+  end
+
+  private_class_method def self.drive_forward(train)
+    route = train.send(:route)
+    if route.nil?
+      puts 'Данному поезду не установлен маршрут!'
+      return
+    end
+
+    puts 'Успешно!' if train.drive_forward
+  end
+
+  private_class_method def self.drive_back(train)
+    route = train.send(:route)
+    if route.nil?
+      puts 'Данному поезду не установлен маршрут!'
+      return
+    end
+
+    puts 'Успешно!' if train.drive_back
+  end
+
+  private_class_method def self.show_wagons(train)
+    if train.wagons.empty?
+      puts 'На данный момент поезд вагонов не имеет.'
+      return
+    end
+    draw_numbered_list(train.wagons) do |wagon|
+      case wagon.class::TYPE
+      when :cargo then WagonUI.detail_for_cargo_wagon wagon
+      when :passenger then WagonUI.detail_for_passenger_wagon wagon
+      else raise 'Что-то пошло не так('
+      end
+    end
+  end
+
+  private_class_method def self.manage_actions
+    {
+      'Добавить вагон' => :add_wagon,
+      'Удалить вагон' => :unhook_wagon,
+      'Управлять вагоном' => :manage_wagon,
+      'Просмотреть информацию по вагонам' => :show_wagons,
+      'Проехать вперёд' => :drive_forward,
+      'Проехать назад' => :move_down
     }
   end
 end

@@ -1,21 +1,28 @@
 # frozen_string_literal: true
-
+require_relative 'modules/validatable'
 class Station
-  include Enumerable
+  include Validatable
+
+  NAME_FORMAT = /^[a-zа-я]{4,20}$/i
 
   attr_reader :name
+
+  check :name, NAME_FORMAT
+
+  @@instances = []
+  def self.all
+    @@instances.freeze
+  end
 
   def initialize(name)
     @name = name
     @trains = []
+    validate!
+    @@instances << self
   end
 
   def trains
     @trains.freeze
-  end
-
-  def each(&block)
-    trains.each(&block) if block_given?
   end
 
   def send_train(target_train)

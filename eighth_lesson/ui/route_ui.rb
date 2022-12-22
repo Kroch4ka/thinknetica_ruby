@@ -2,20 +2,24 @@
 require_relative 'base_ui'
 require_relative 'station_ui'
 require_relative '../route'
+require_relative '../errors/validation_error'
 class RouteUI < BaseUI
   def self.create_route
-    puts 'Добро пожаловать в режим создания маршрута!'
-    puts 'У Вас нет созданных станций!' if stations.empty?
     if stations.size < 2
       needed_stations = 2 - stations.size
       puts "Для создания станции - нужно по-крайней мере 2 свободных. Нужно ещё #{needed_stations}."
       return
     end
-    puts 'Выберите начальную станцию из предложенных!'
-    start_station = choose_variant(stations, &:name)
-    puts 'Выберите конечную станцию из предложенных!'
-    end_station = choose_variant(stations, &:name)
-    puts 'Успешно!' if routes << Route.new(start_station, end_station)
+    begin
+      puts 'Выберите начальную станцию из предложенных!'
+      start_station = choose_variant(stations, &:name)
+      puts 'Выберите конечную станцию из предложенных!'
+      end_station = choose_variant(stations, &:name)
+      puts 'Успешно!' if routes << Route.new(start_station, end_station)
+    rescue ValidationError => e
+      puts e.message
+      retry
+    end
   end
 
   def self.manage_routes
@@ -31,14 +35,7 @@ class RouteUI < BaseUI
     send(manage_actions[chosen_action], managed_route)
   end
 
-  private_class_method def self.manage_actions
-    {
-      'Добавить' => :add_station_to_route,
-      'Удалить' => :destroy_station_on_route
-    }
-  end
-
-  private_class_method def self.add_station_to_route(route, station)
+  private_class_method def self.add_station_to_route(route)
     puts 'Выберите одну из станций: '
     chosen_station = choose_variant(route.stations, &:name)
     puts 'Успешно' if route.add_intermediate_station chosen_station
@@ -48,5 +45,12 @@ class RouteUI < BaseUI
     puts 'Выберите одну из станций: '
     chosen_station = choose_variant(route.stations, &:name)
     puts 'Успешно' if route.destroy_intermediate_station chosen_station
+  end
+
+  private_class_method def self.manage_actions
+    {
+      'Добавить' => :add_station_to_route,
+      'Удалить' => :destroy_station_on_route
+    }
   end
 end
