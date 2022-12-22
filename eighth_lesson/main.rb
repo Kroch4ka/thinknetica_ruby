@@ -1,4 +1,4 @@
 # frozen_string_literal: true
-require_relative 'ui/ConsoleLoop'
+require_relative 'ui/console_loop'
 
 ConsoleLoop.run
