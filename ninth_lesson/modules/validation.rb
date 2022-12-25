@@ -34,6 +34,7 @@ module Validation
   
     private
   
+    # Попробовал замыкания, работают как в JS))
     def presence_validation_callback()
       ->(value) { raise ValidationError, "Should be not nil or not empty string" if value.nil? || (value.empty? if value.is_a? String) }
     end
