@@ -10,7 +10,7 @@ class BaseUI
 
   def self.choose_variant(variants, &block)
     loop do
-      block_given? ? draw_numbered_list(variants, &block) : draw_numbered_list(variants)
+      draw_numbered_list(variants, &block)
       print 'Вариант: '
       chosen_number = gets.chomp.to_i
       if chosen_number.zero? || variants[chosen_number - 1].nil?
