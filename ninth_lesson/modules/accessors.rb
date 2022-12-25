@@ -2,8 +2,8 @@ module Accessors
   def attr_accessor_with_history(*attrs)
     library
     generate_attr_getters attrs
-    generate_attr_setters_with_history attrs
-    generate_history_attr_values_viewers attrs
+    attr_setters_with_history attrs
+    attr_getters_with_history attrs
   end
 
   private
@@ -16,7 +16,7 @@ module Accessors
     end
   end
 
-  def generate_attr_setters_with_history(attrs)
+  def attr_setters_with_history(attrs)
     attrs.each do |attr|
       define_method("#{attr}=".to_sym) do |val|
         self.class.send(:historify, attr, val)
@@ -25,18 +25,18 @@ module Accessors
     end
   end
 
-  def generate_history_attr_values_viewers(attrs)
+  def attr_getters_with_history(attrs)
     attrs.each do |attr|
       define_method("#{attr}_history") do
-        self.class.send(:find_history_in_library, attr)&.values
+        self.class.send(:find_history_in_library, attr)&.values_history
       end
     end
   end
 
-  History = Struct.new(:attr, :values)
+  History = Struct.new(:attr, :values_history)
   def historify(attr, val)
     target_history = find_history_in_library attr
-    target_history ? target_history.values << val : library << History.new(attr, [] << val)
+    target_history ? target_history.values_history << val : library << History.new(attr, [] << val)
   end
 
   def find_history_in_library(attr)

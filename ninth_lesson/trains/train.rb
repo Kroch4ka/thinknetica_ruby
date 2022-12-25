@@ -11,7 +11,7 @@ class Train
   ALLOWED_WAGON_TYPES = %i[].freeze
   TYPE = nil
   NUMBER_FORMAT = /^\w{3}-*\w{2}$/
-  attr_reader :current_speed, :number
+  attr_reader :current_speed, :number, :wagons
 
 
   @@trains = []
@@ -28,10 +28,6 @@ class Train
     @current_station_index = 0
     validate!
     register_instance
-  end
-
-  def wagons
-    @wagons.freeze
   end
 
   def add_wagon(wagon)

@@ -12,7 +12,7 @@ class WagonUI < BaseUI
     total_volume = gets.to_i
 
     puts 'Успешно!'
-    wagon_types[type_name][:klass].new(total_volume)
+    wagon_types[chosen_wagon_type][:klass].new(total_volume)
   end
 
   def self.manage_wagon(train)
