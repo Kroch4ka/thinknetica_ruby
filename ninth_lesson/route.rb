@@ -1,6 +1,9 @@
 # frozen_string_literal: true
+require_relative 'modules/accessors'
 
 class Route
+  extend Accessors
+
   def initialize(start_station, end_station)
     @start_station = start_station
     @end_station = end_station
@@ -32,5 +35,5 @@ class Route
   private
 
   attr_reader :start_station, :end_station
-  attr_accessor :intermediate_stations
+  attr_accessor_with_history :intermediate_stations
 end

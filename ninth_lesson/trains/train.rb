@@ -12,8 +12,7 @@ class Train
   TYPE = nil
   NUMBER_FORMAT = /^\w{3}-*\w{2}$/
   attr_reader :current_speed, :number
-  
-  instances # Инициализируем инстанс переменную класса @instances при загрузке класса
+
 
   @@trains = []
   def self.find(number)

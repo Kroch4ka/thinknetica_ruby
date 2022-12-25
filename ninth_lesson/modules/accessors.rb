@@ -1,5 +1,4 @@
 module Accessors
-
   def attr_accessor_with_history(*attrs)
     library
     generate_attr_getters attrs

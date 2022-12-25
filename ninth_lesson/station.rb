@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 require_relative 'modules/validation'
+require_relative 'modules/accessors'
+
 class Station
   include Validation
+  extend Accessors
 
   NAME_FORMAT = /^[a-zа-я]{4,20}$/i
 
