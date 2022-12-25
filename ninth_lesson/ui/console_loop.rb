@@ -7,7 +7,7 @@ class ConsoleLoop < BaseUI
   def self.run
     loop do
       action = actions[choose_variant(actions.keys)]
-      BaseUI.subclasses.filter { |klass| klass.respond_to? action }.pop&.send(action)
+      BaseUI.subclasses.each { |klass| klass.respond_to?(action) ? klass.send(action) : nil }
     end
   end
 
